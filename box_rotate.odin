@@ -128,7 +128,7 @@ main :: proc() {
 		sdl.render_present(rdr);
 		t_info = update_counters_and_show_fps(win, t_info);	
 		/* cap the frame rate */
-		time.sleep(3 * time.Millisecond);
+		time.sleep(2 * time.Millisecond);
 	}
 	fmt.println("Running time (seconds) ", t_info.total_running_time / time.Second);
 }
