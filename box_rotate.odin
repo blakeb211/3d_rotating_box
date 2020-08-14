@@ -17,10 +17,6 @@ palette : [216]Color;
 Float :: f32;
 Vec3 :: [3]f32;
 Tri ::  [3]Vec3;
-Mesh :: [dynamic]Tri; 
-Mat4x4 :: linalg.Matrix4x4;
-Mat1x4 :: linalg.Matrix1x4;
-
 
 rotation : Float = 0.0;
 
@@ -31,7 +27,6 @@ draw_triangle :: proc(rdr : ^sdl.Renderer, in_data : Tri)
 	proj_mat := matrix4_perspective(math.PI / 2, WIDTH/HEIGHT,0.1,100);
 	rot_mat := matrix3_rotate(math.PI / 360.0 * rotation, Vector3{0.5,0.5,0.5}); 
 
-	//data : [3]Vec3 = { {0, 0, 0}, {0, 1, 0}, {1, 1, 0} };
 	// rotate
 	data_rotated := [?][1][3]Float {
 		matrix_mul_differ(rot_mat, Matrix1x3{ {data[0].x, data[0].y, data[0].z}  }),
@@ -39,12 +34,12 @@ draw_triangle :: proc(rdr : ^sdl.Renderer, in_data : Tri)
 		matrix_mul_differ(rot_mat, Matrix1x3{ {data[2].x, data[2].y, data[2].z}  }),
 	};
 	// copy rotated data back to data
-	fmt.println("data_rotated:\n", data_rotated, "type:", typeid_of(type_of(data_rotated)));
+	//fmt.println("data_rotated:\n", data_rotated, "type:", typeid_of(type_of(data_rotated)));
 	data = {data_rotated[0][0], data_rotated[1][0], data_rotated[2][0]} ;
-	fmt.println("data should == data_rotated:\n", data, "type:", typeid_of(type_of(data)));
+	//fmt.println("data should == data_rotated:\n", data, "type:", typeid_of(type_of(data)));
 
 	// translate into screen 
-	for _, i in data do data[i].z += 3000.0;
+	for _, i in data do data[i].z += 10.0;
 
 	// project onto screen
 	data_projected := [?][1][4]Float {
@@ -54,13 +49,13 @@ draw_triangle :: proc(rdr : ^sdl.Renderer, in_data : Tri)
 	};
 
 	// copy projected data back to data
-	fmt.println("data_projected:\n", data_projected, "type:", typeid_of(type_of(data_projected)));
+	//fmt.println("data_projected:\n", data_projected, "type:", typeid_of(type_of(data_projected)));
 	data = {
 		{data_projected[0][0][0], data_projected[0][0][1], data_projected[0][0][2]},
 		{data_projected[1][0][0], data_projected[1][0][1], data_projected[1][0][2]},
 		{data_projected[2][0][0], data_projected[2][0][1], data_projected[2][0][2]}
 	};
-	fmt.println("data should == data_projected\n", data, "type:", typeid_of(type_of(data)));
+	//fmt.println("data should == data_projected\n", data, "type:", typeid_of(type_of(data)));
 
 	// translate & scale
 	for _, i in data {
@@ -115,7 +110,7 @@ main :: proc() {
 		for sdl.poll_event(&e) != 0 {
 			if e.type == sdl.Event_Type.Key_Down {
 				if e.key.keysym.scancode == sdl.Scancode.Escape do running = false;
-				//if e.key.keysym.scancode == sdl.Scancode.Space do place_droplet();
+				//if e.key.keysym.scancode == sdl.Scancode.Space do unwritten_procedure();
 			}
 			if e.type == sdl.Event_Type.Quit do	running = false;
 		}
@@ -133,7 +128,7 @@ main :: proc() {
 		sdl.render_present(rdr);
 		t_info = update_counters_and_show_fps(win, t_info);	
 		/* cap the frame rate */
-		time.sleep(2 * time.Millisecond);
+		time.sleep(3 * time.Millisecond);
 	}
 	fmt.println("Running time (seconds) ", t_info.total_running_time / time.Second);
 }
